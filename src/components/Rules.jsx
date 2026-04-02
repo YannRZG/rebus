@@ -10,26 +10,26 @@ export default function Rules() {
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="flex flex-col items-center gap-4"
+        className="flex flex-col items-center gap-3"
       >
         <motion.h1
           variants={itemVariants}
-          className="text-4xl font-bold text-white text-center"
+          className="text-6xl font-bold text-white text-center"
         >
           Règles
         </motion.h1>
 
         <motion.p variants={itemVariants} className="text-lg text-white text-center">
-          - Tu dois résoudre le rébus en moins de 60 secondes.
+          - Tu dois résoudre le rébus en moins de <strong className="text-pink-500 text-2xl">60 secondes</strong>
         </motion.p>
         <motion.p variants={itemVariants} className="text-lg text-white text-center">
           - Si tu échoues 
         </motion.p>
         <motion.img
-          src="https://res.cloudinary.com/dyhsrlchi/image/upload/f_webp,q_auto/map2_dqyl25.png"
+          src="https://res.cloudinary.com/dyhsrlchi/image/upload/f_webp,q_auto/map3_y2oogk.png"
           alt="Rébus 1"
           variants={itemVariants}
-          className="w-100 h-60 object-cover cursor-pointer"
+          className="w-120 h-60 object-cover cursor-pointer"
           whileHover={{ scale: 1.95 }}
           whileTap={{ scale: 1.95 }}
           initial={{ opacity: 0, y: 30 }}
@@ -39,7 +39,7 @@ export default function Rules() {
         <motion.p variants={itemVariants} className="text-lg text-white text-center">
           - Si tu réussis
         </motion.p>
-        <motion.p variants={itemVariants} className="text-5xl text-white text-center">
+        <motion.p variants={itemVariants} className="text-7xl text-white text-center">
         😏
         </motion.p>
         <motion.p variants={itemVariants} className="text-lg text-white text-center">

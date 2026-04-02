@@ -13,12 +13,12 @@ function Hero() {
         animate="visible"
         variants={containerVariants}
       >
-        <motion.h1 variants={itemVariants} className="text-4xl font-bold text-white text-center">
+        <motion.h1 variants={itemVariants} className="text-7xl font-bold text-white text-center">
            Margaux 
         </motion.h1>
         <motion.h2
           variants={itemVariants}
-          className="text-2xl font-bold text-white text-center"
+          className="text-4xl font-bold text-white text-center"
         >
          🎉 Joyeux anniversaire ! 🎉
         </motion.h2>

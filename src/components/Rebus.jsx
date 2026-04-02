@@ -1,5 +1,5 @@
 import * as motion from "motion/react-client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 const images = [
   "https://res.cloudinary.com/dyhsrlchi/image/upload/f_webp,q_auto/IMG_0848_c0ac89.JPG",
@@ -8,24 +8,47 @@ const images = [
   "https://res.cloudinary.com/dyhsrlchi/image/upload/f_webp,q_auto/IMG_0846_z259yb.JPG",
 ]
 
-// Fonction pour normaliser : casse, accents, espaces multiples, apostrophes
-const normalize = (str) =>
-  str
-    .normalize("NFD")                   // décompose les caractères accentués
-    .replace(/[\u0300-\u036f]/g, "")   // supprime les accents
-    .replace(/[\s'’]+/g, "")           // supprime les espaces et apostrophes
-    .toLowerCase()                      // met en minuscules
-
 export default function Rebus() {
   const [answer, setAnswer] = useState("")
   const [correct, setCorrect] = useState(false)
   const [shake, setShake] = useState(false)
+  const [timeLeft, setTimeLeft] = useState(60)
+  const [timeUp, setTimeUp] = useState(false)
+
+  // Timer (s'arrête si gagné)
+  useEffect(() => {
+    if (correct) return
+
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timer)
+          setTimeUp(true)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [correct])
+
+  // Reset complet
+  const handleRestart = () => {
+    setAnswer("")
+    setCorrect(false)
+    setTimeUp(false)
+    setTimeLeft(60)
+    setShake(false)
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (normalize(answer.trim()) === normalize("saut à l'élastique")) {
+
+    if (timeUp) return
+
+    if (answer.trim().toLowerCase() === "saut à l'élastique") {
       setCorrect(true)
-      setTimeout(() => setCorrect(false), 3000) // disparaît après 3 secondes
     } else {
       setShake(true)
       setTimeout(() => setShake(false), 500)
@@ -34,8 +57,9 @@ export default function Rebus() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
+      
       <motion.h2
-        className="text-3xl md:text-4xl font-bold text-white mb-8 text-center"
+        className="text-3xl md:text-4xl font-bold text-white mb-2 text-center"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -43,51 +67,105 @@ export default function Rebus() {
         Résous le rébus pour découvrir ton cadeau 🎁
       </motion.h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-        {images.map((src, i) => (
-          <motion.img
-            key={i}
-            src={src}
-            alt={`Rébus ${i + 1}`}
-            className="w-32 h-32 md:w-40 md:h-40 object-cover rounded-xl shadow-lg cursor-pointer"
-            whileHover={{ scale: 1.5 }}
-            whileTap={{ scale: 1.5 }}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.2, type: "spring", stiffness: 100 }}
-          />
-        ))}
-      </div>
-
-      <motion.form
-        onSubmit={handleSubmit}
-        className="flex flex-col items-center w-full max-w-md"
-        animate={shake ? { x: [-10, 10, -10, 10, 0] } : {}}
-        transition={{ duration: 0.5 }}
-      >
-        <input
-          type="text"
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          placeholder="Écris ta réponse ici..."
-          className="w-full p-3 rounded-lg border-2 border-gray-400 text-lg focus:outline-none focus:ring-4 focus:ring-pink-400 text-gray-100"
-        />
-        <button
-          type="submit"
-          className="mt-4 px-6 py-3 bg-pink-500 text-white rounded-lg font-bold hover:bg-pink-600 transition"
+      {/* Timer */}
+      {!correct && !timeUp && (
+        <motion.div
+          className="text-white font-bold text-xl mb-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
         >
-          Vérifier
-        </button>
-      </motion.form>
+          ⏱️ Temps restant : {timeLeft}s
+        </motion.div>
+      )}
 
+      {/* Jeu */}
+      {!timeUp && !correct && (
+        <>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            {images.map((src, i) => (
+              <motion.img
+                key={i}
+                src={src}
+                alt={`Rébus ${i + 1}`}
+                className="w-32 h-32 md:w-40 md:h-40 object-cover rounded-xl shadow-lg cursor-pointer"
+                whileHover={{ scale: 1.5 }}
+                whileTap={{ scale: 1.5 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.2, type: "spring", stiffness: 100 }}
+              />
+            ))}
+          </div>
+
+          <motion.form
+            onSubmit={handleSubmit}
+            className="flex flex-col items-center w-full max-w-md"
+            animate={shake ? { x: [-10, 10, -10, 10, 0] } : {}}
+            transition={{ duration: 0.5 }}
+          >
+            <input
+              type="text"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              placeholder="Écris ta réponse ici..."
+              className="w-full p-3 rounded-lg border-2 border-gray-400 text-lg focus:outline-none focus:ring-4 focus:ring-pink-400 text-gray-100"
+            />
+            <button
+              type="submit"
+              className="mt-4 px-6 py-3 bg-pink-500 text-white rounded-lg font-bold hover:bg-pink-600 transition"
+            >
+              Vérifier
+            </button>
+          </motion.form>
+        </>
+      )}
+
+      {/* Victoire */}
       {correct && (
         <motion.div
-          className="mt-8 p-6 bg-green-400 text-white rounded-xl text-center font-bold text-xl shadow-lg"
+          className="mt-8 p-6 bg-green-400 text-white rounded-xl text-center font-bold text-xl shadow-lg flex flex-col items-center"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: "spring", bounce: 0.5, duration: 0.8 }}
         >
-          🎉 Bravo ! Ton cadeau est un saut à l'élastique ! 🎉
+          🎉 Bravo ! 🎉
+          <img
+            src="https://res.cloudinary.com/dyhsrlchi/image/upload/f_webp,q_auto/tenor_1_nqtrpn.gif"
+            alt="Victoire"
+            className="mt-4 w-48 rounded-lg"
+          />
+
+          <button
+            onClick={handleRestart}
+            className="mt-6 px-6 py-3 bg-white text-green-500 rounded-lg font-bold hover:bg-gray-200 transition"
+          >
+            Rejouer
+          </button>
+        </motion.div>
+      )}
+
+      {/* Défaite */}
+      {timeUp && !correct && (
+        <motion.div
+          className="mt-8 p-6 bg-red-400 text-white rounded-xl text-center font-bold text-xl shadow-lg flex flex-col items-center"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", bounce: 0.5, duration: 0.8 }}
+        >
+          ⏰ Temps écoulé ! Tu n'as pas résolu le rébus.
+
+          <img
+            src="https://res.cloudinary.com/dyhsrlchi/image/upload/f_webp,q_auto/tenor_jiqrgw.gif"
+            alt="Défaite"
+            className="mt-4 w-48 rounded-lg"
+          />
+
+          <button
+            onClick={handleRestart}
+            className="mt-6 px-6 py-3 bg-white text-red-500 rounded-lg font-bold hover:bg-gray-200 transition"
+          >
+            Rejouer
+          </button>
         </motion.div>
       )}
     </div>

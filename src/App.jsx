@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Rebus from './components/Rebus'
-import Hero from './components/hero'
+import Hero from './components/Hero'
 import RulesPage from './pages/Rules'
 function App() {
   return (

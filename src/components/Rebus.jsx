@@ -3,10 +3,10 @@ import { useState } from "react"
 
 
 const images = [
-  "src/assets/IMG_0848.JPG",
-  "src/assets/IMG_0849.JPG",
-  "src/assets/IMG_0847.JPG",
-  "src/assets/IMG_0846.JPG",
+  "https://res.cloudinary.com/dyhsrlchi/image/upload/f_webp,q_auto/IMG_0848_c0ac89.JPG",
+  "https://res.cloudinary.com/dyhsrlchi/image/upload/f_webp,q_auto/IMG_0849_v4dsuf.JPG",
+  "https://res.cloudinary.com/dyhsrlchi/image/upload/f_webp,q_auto/IMG_0847_ksqcef.JPG",
+  "https://res.cloudinary.com/dyhsrlchi/image/upload/f_webp,q_auto/IMG_0846_z259yb.JPG",
 ]
 
 export default function Rebus() {

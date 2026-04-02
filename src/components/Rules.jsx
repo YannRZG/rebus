@@ -26,7 +26,7 @@ export default function Rules() {
           - Si tu échoues 
         </motion.p>
         <motion.img
-          src="src/assets/map2.png"
+          src="https://res.cloudinary.com/dyhsrlchi/image/upload/f_webp,q_auto/map2_dqyl25.png"
           alt="Rébus 1"
           variants={itemVariants}
           className="w-100 h-60 object-cover cursor-pointer"

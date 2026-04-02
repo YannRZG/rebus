@@ -1,5 +1,5 @@
 import { useState } from "react"
-import * as motion from "motion/react-client"
+
 
 const images = [
   "src/assets/IMG_0846.JPG",

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import * as motion from "motion/react-client"
+
 
 function Hero() {
   const navigate = useNavigate()

@@ -1,13 +1,20 @@
 import * as motion from "motion/react-client"
 import { useState } from "react"
 
-
 const images = [
   "https://res.cloudinary.com/dyhsrlchi/image/upload/f_webp,q_auto/IMG_0848_c0ac89.JPG",
   "https://res.cloudinary.com/dyhsrlchi/image/upload/f_webp,q_auto/IMG_0849_v4dsuf.JPG",
   "https://res.cloudinary.com/dyhsrlchi/image/upload/f_webp,q_auto/IMG_0847_ksqcef.JPG",
   "https://res.cloudinary.com/dyhsrlchi/image/upload/f_webp,q_auto/IMG_0846_z259yb.JPG",
 ]
+
+// Fonction pour normaliser : casse, accents, espaces multiples, apostrophes
+const normalize = (str) =>
+  str
+    .normalize("NFD")                   // décompose les caractères accentués
+    .replace(/[\u0300-\u036f]/g, "")   // supprime les accents
+    .replace(/[\s'’]+/g, "")           // supprime les espaces et apostrophes
+    .toLowerCase()                      // met en minuscules
 
 export default function Rebus() {
   const [answer, setAnswer] = useState("")
@@ -16,8 +23,9 @@ export default function Rebus() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (answer.trim().toLowerCase() === "saut à l'élastique") {
+    if (normalize(answer.trim()) === normalize("saut à l'élastique")) {
       setCorrect(true)
+      setTimeout(() => setCorrect(false), 3000) // disparaît après 3 secondes
     } else {
       setShake(true)
       setTimeout(() => setShake(false), 500)
@@ -35,7 +43,6 @@ export default function Rebus() {
         Résous le rébus pour découvrir ton cadeau 🎁
       </motion.h2>
 
-      {/* Images du rébus */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
         {images.map((src, i) => (
           <motion.img
@@ -52,7 +59,6 @@ export default function Rebus() {
         ))}
       </div>
 
-      {/* Input */}
       <motion.form
         onSubmit={handleSubmit}
         className="flex flex-col items-center w-full max-w-md"
@@ -74,7 +80,6 @@ export default function Rebus() {
         </button>
       </motion.form>
 
-      {/* Message de succès */}
       {correct && (
         <motion.div
           className="mt-8 p-6 bg-green-400 text-white rounded-xl text-center font-bold text-xl shadow-lg"
